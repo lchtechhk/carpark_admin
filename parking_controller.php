@@ -28,9 +28,10 @@ $BookingDao = new BookingDao($connect);
 
 switch($operation){
     case 'findAll':
-        $resut_parking = $ParkingDao->findAllNoStatusOrderById();
-        $encode = json_encode($resut_parking);
-        error_log('resut_parking : ' . $encode);
+        $user_id = $data['user_id'];
+        $latest_parking = $ParkingDao->getParking($user_id);
+        $encode = json_encode($latest_parking);
+        // error_log('resut_parking : ' . $encode);
         echo $encode;
     break;
     case 'holding':
@@ -79,7 +80,7 @@ switch($operation){
             $user_id = $data['user_id'];
             $park_id = $data['park_id'];
             // Find PrePayment Record
-            $resut_parking = $BookingDao->find_prePayment($user_id,$park_id);
+            $resut_parking = $BookingDao->find_preArrival($user_id,$park_id);
             if(isset($resut_parking) && sizeof($resut_parking) == 0 ) throw new Exception("The CarPark Order Dose Not Find");
             // Update Booking Record To Paid
             $booking_id = $resut_parking[0]['id'];
@@ -88,6 +89,30 @@ switch($operation){
             $booking['charge_amount'] = 100;
             $booking['progress_time'] = 2;
             $booking['status'] = 'paid';
+            $update_parking = db_prepareUpdate($connect, 'booking',$booking,$booking_id);
+            if(!$update_parking)throw new Exception("Error To Update Record To Booking.");
+            $connect->commit();
+            $res['message_status'] = true;
+        }catch (Exception $e){
+            $res = exception_rollback($connect,$res,$e,true);
+        }   
+        $latest_parking = $ParkingDao->getParking($user_id);
+        $res['park_data'] = $latest_parking;
+        echo json_encode($res);
+    break;
+    case 'arrival':
+        $connect->begin_transaction();
+        try{
+            $user_id = $data['user_id'];
+            $park_id = $data['park_id'];
+            // Find PrePayment Record
+            $resut_parking = $BookingDao->find_preArrival($user_id,$park_id);
+            if(isset($resut_parking) && sizeof($resut_parking) == 0 ) throw new Exception("The CarPark Order Dose Not Find");
+            // Update Booking Record To Paid
+            $booking_id = $resut_parking[0]['id'];
+            $booking = array();
+            $booking['arrival_date_time'] = date('Y-m-d H:i:s');
+            $booking['status'] = 'arrival';
             $update_parking = db_prepareUpdate($connect, 'booking',$booking,$booking_id);
             if(!$update_parking)throw new Exception("Error To Update Record To Booking.");
             $connect->commit();
