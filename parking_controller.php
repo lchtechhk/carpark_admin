@@ -44,6 +44,7 @@ switch($operation){
         $park_status = $row['operation_status'];
         if($park_status == 'inactive'){
             $res['message_status'] = false;
+            $res['message'] = "車位已被使用";
         }else {
             $connect->begin_transaction();
             try{
@@ -80,7 +81,7 @@ switch($operation){
             $user_id = $data['user_id'];
             $park_id = $data['park_id'];
             // Find PrePayment Record
-            $resut_parking = $BookingDao->find_preArrival($user_id,$park_id);
+            $resut_parking = $BookingDao->find_prePayment($user_id,$park_id);
             if(isset($resut_parking) && sizeof($resut_parking) == 0 ) throw new Exception("The CarPark Order Dose Not Find");
             // Update Booking Record To Paid
             $booking_id = $resut_parking[0]['id'];
