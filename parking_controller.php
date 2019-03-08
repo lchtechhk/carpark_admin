@@ -12,7 +12,7 @@ $res = array();
 $postdata = json_decode(file_get_contents("php://input"));
 
 foreach ($postdata as $key => $value) {
-    // error_log($key . ' : ' . $value);
+    error_log($key . ' : ' . $value);
     $data[$key] = $value;
 }
 // error_log('operation --' . $operation);
@@ -27,11 +27,11 @@ $BookingDao = new BookingDao($connect);
 // $View_ParkBookingDao = new View_ParkBookingDao($connect);
 
 switch($operation){
-    case 'findAll':
+    case 'findByUserId':
         $user_id = $data['user_id'];
         $latest_parking = $ParkingDao->getParking($user_id);
         $encode = json_encode($latest_parking);
-        // error_log('resut_parking : ' . $encode);
+        error_log('findByUserId : ' . $encode);
         echo $encode;
     break;
     case 'holding':

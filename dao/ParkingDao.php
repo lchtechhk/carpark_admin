@@ -4,6 +4,7 @@
             parent::__construct($connect,'parking');
         }
         function getParking($user_id){
+            if(empty($user_id))return array();
             $connect = $this->connect;
             $table = $this->table;
             $res = array();
