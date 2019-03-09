@@ -10,7 +10,7 @@ $data = array();
 $res = array();
 $postdata = json_decode(file_get_contents("php://input"));
 
-$res['message_status'] = "success";
+$res['message_status'] = true;
 $res['message'] = '';
 
 $UsersDao = new UsersDao($connect);
@@ -30,10 +30,12 @@ switch($operation){
             $result_user = $UsersDao->findByLicenseAndHKID($license, $hkid);
             if(empty($result_user)) throw new Exception('Wrong Account');
             $res['user_data'] = $result_user;
+            $res['message'] = "成功登入";
         }catch (Exception $e){
             $res = exception_rollback($connect,$res,$e,true);
         }
         $encode = json_encode($res);
+        error_log("Login : " . $encode);
         echo $encode;
     break;
 
@@ -42,17 +44,19 @@ switch($operation){
         try{
             $license = $data['license'];
             $hkid = $data['hkid'];
+            if(empty($license) || empty($hkid)) throw new Exception('車牌和身份證不能空');     
             $is_duplicate = $UsersDao->check_duplicate($license, $hkid);
             if($is_duplicate != 0)throw new Exception('執照和香港身份證已使用');      
             $result_users_id = db_prepareInsert($connect, 'users',$data);
             if($result_users_id == 0)throw new Exception("Error To Added A New Record To User.");
-            $res['message'] = "Created An User";
+            $res['message'] = "成功創建了用户";
             // UsersDao
             $connect->commit();
         }catch (Exception $e){
             $res = exception_rollback($connect,$res,$e,true);
         }
         $encode = json_encode($res);
+        error_log("Register : " . $encode);
         echo $encode;
     break;
     case 'findAll':

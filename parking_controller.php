@@ -19,7 +19,7 @@ foreach ($postdata as $key => $value) {
 // error_log('main_id --' . $main_id);
 // error_log('data --' .json_encode($data));
 
-$res['message_status'] = "success";
+$res['message_status'] = true;
 $res['message'] = '';
 
 $ParkingDao = new ParkingDao($connect);
@@ -27,9 +27,16 @@ $BookingDao = new BookingDao($connect);
 // $View_ParkBookingDao = new View_ParkBookingDao($connect);
 
 switch($operation){
+    case 'finAll' : 
+        $latest_parking = $ParkingDao->findAllOrderById();
+        $encode = json_encode($latest_parking);
+        error_log('findByUserId : ' . $encode);
+        echo $encode;
+    break;
     case 'findByUserId':
-        $user_id = $data['user_id'];
+        $user_id = empty($data['user_id']) ? 0 : $data['user_id'];
         $latest_parking = $ParkingDao->getParking($user_id);
+       
         $encode = json_encode($latest_parking);
         error_log('findByUserId : ' . $encode);
         echo $encode;
