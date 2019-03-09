@@ -27,7 +27,7 @@ $BookingDao = new BookingDao($connect);
 // $View_ParkBookingDao = new View_ParkBookingDao($connect);
 
 switch($operation){
-    case 'finAll' : 
+    case 'findAll' : 
         $latest_parking = $ParkingDao->findAllOrderById();
         $encode = json_encode($latest_parking);
         error_log('findByUserId : ' . $encode);
