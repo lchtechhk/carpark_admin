@@ -46,7 +46,7 @@ switch($operation){
         $park_id = $data['park_id'];
 
         // Check Parking Status
-        $resut_parking = $ParkingDao->findById($user_id);
+        $resut_parking = $ParkingDao->findById($park_id);
         $row = $resut_parking[0];
         $park_status = $row['operation_status'];
         if($park_status == 'inactive'){
