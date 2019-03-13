@@ -16,9 +16,9 @@
                     $id = $row['id'];
                     $status = $row['operation_status'];
                     if($status == 'active'){
-                        $row['booking_status_descr'] = '有空';
+                        $row['booking_status_descr'] = '有空位';
                     }if($status == 'inactive'){
-                        $row['booking_status_descr'] = '缺';
+                        $row['booking_status_descr'] = '不可用';
                     }
                     $res[$id] = $row;
                 }
